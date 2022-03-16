@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\SocialController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +16,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+
+Route::get('/subscription',[SubscriptionController::class, 'index'])->name('subscription');
+
+Auth::routes();
+
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register');
+
+
+Route::post('/pay-now', [SubscriptionController::class, 'pay_now'])->middleware('auth')->name('pay-now');
+
+
+Route::middleware(['auth','membership'])->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 });
