@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\SubscriptionController;
 
@@ -37,5 +38,17 @@ Route::middleware(['auth','membership'])->group(function () {
         return view('welcome');
     });
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+});
+
+
+// admin routes
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['is.admin']], function () {
+    // index page
+    Route::get('/users', [UsersController::class, 'index']);
+    Route::get('/users/delete/{id}', [UsersController::class, 'destroy']);
+    Route::get('/users/change_status/{id}', [UsersController::class, 'change_status']);
+    Route::get('/users/search', [UsersController::class, 'search']);
 
 });
