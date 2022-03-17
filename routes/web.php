@@ -28,6 +28,10 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 Route::post('/pay-now', [SubscriptionController::class, 'pay_now'])->middleware('auth')->name('pay-now');
 
 
+Route::get('auth/{type}', [SocialController::class, 'login_with_social']);
+
+Route::get('auth/{type}/callback', [SocialController::class, 'login_callback']);
+
 Route::middleware(['auth','membership'])->group(function () {
     Route::get('/', function () {
         return view('welcome');

@@ -10,7 +10,18 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
+                        <div class="text-center mb-4">
+                            <a class="btn bg-primary text-white px-5" href="{{ url('auth/facebook') }}" class="">
+                                <i class="fa fa-facebook me-1"></i>
+                                الدخول بواسطة الفيس بوك
+                            </a>
 
+                            <a class="btn bg-danger text-white px-5" href="{{ url('auth/google') }}" class="">
+                                <i class="fa fa-google me-1"></i>
+                                الدخول بواسطة الفيس جوجل
+                            </a>
+
+                        </div>
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
 
@@ -63,6 +74,13 @@
                                     </a>
                                 @endif
                             </div>
+                            @if (Session::has('failureMsg'))
+                                <div class="container  mt-4">
+                                    <div class="alert texgt-center alert-danger">
+                                        {{ Session::get('failureMsg') }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </form>
                 </div>

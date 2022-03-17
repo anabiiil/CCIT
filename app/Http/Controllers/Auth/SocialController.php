@@ -17,13 +17,11 @@ class SocialController extends Controller
     {
         return Socialite::driver($type)->redirect();
     }
-
-
     public function login_callback(Request $request,$type)
     {
 
         if (! $request->input('code')) {
-            return redirect('/')->with('failureMsg','An error occurred, try again');
+            return redirect('/')->with('failureMsg','an error');
         }
 
         try {
@@ -31,14 +29,19 @@ class SocialController extends Controller
             $user = Socialite::driver($type)->stateless()->user();
             $providerId = Social_Provider::where(['provider_id'=> $user['id'],'provider'=>$type])->first();
             if($providerId){
-                Auth::login($providerId->user);
-                return redirect('/');
+
+                if ($providerId->user->status == 'active') {
+                    Auth::login($providerId->user);
+                    return redirect('/');
+                }else{
+                    return redirect("login")->with('failureMsg','you can\'t logged in, you account deactivate. ');
+                }
+
             }else{
 
                 $createUser = User::create([
                     'name' => $user['name'],
                     'email' => $user['email'] ?? $user['id'],
-                    'type' => 'customer',
                     'password' => Hash::make(Str::random(40)),
                 ]);
 
@@ -49,11 +52,12 @@ class SocialController extends Controller
                 ]);
 
                 Auth::login($createUser);
-                return redirect('/');
+                return redirect('/')->with('successMsg','login succesfully');
             }
 
         } catch (Exception $exception) {
-            return redirect()->with('failureMsg','An error occurred, try again');
+            return redirect()->with('failureMsg','an error');
+
         }
     }
 }
